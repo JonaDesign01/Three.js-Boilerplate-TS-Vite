@@ -1,6 +1,9 @@
 import "./style.css";
-import * as THREE from "three";
 import { createNoise4D } from "simplex-noise";
+import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass";
 
 //basics
 const scene = new THREE.Scene();
@@ -20,6 +23,20 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+
+// Basic setup for post-processing
+const composer = new EffectComposer(renderer);
+
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  1.5, // Intensity
+  0.4, // Radius
+  0.45 // Threshold
+);
+composer.addPass(bloomPass);
 
 //lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 5);
